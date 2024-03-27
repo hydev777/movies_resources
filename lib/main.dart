@@ -13,13 +13,6 @@ void main() async {
         : 'http://localhost:5001/graphql',
   );
 
-  // ValueNotifier<GraphQLClient> client = ValueNotifier(
-  //   GraphQLClient(
-  //     link: httpLink,
-  //     cache: GraphQLCache(store: InMemoryStore()),
-  //   ),
-  // );
-
   runApp(
     MultiProvider(
       providers: [
@@ -33,10 +26,6 @@ void main() async {
         )
       ],
       child: const MyApp(),
-      // child: GraphQLProvider(
-      //   client: client,
-      //   child: const MyApp(),
-      // ),
     ),
   );
 }
