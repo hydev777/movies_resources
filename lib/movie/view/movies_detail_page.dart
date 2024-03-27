@@ -108,6 +108,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                 children: [
                                   Text(review.body!),
                                   RatingBar.builder(
+                                    updateOnDrag: false,
                                     initialRating:
                                         double.parse(review.rating.toString()),
                                     minRating: 1,
@@ -120,6 +121,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                       Icons.star,
                                       color: Colors.amber,
                                     ),
+                                    ignoreGestures: true,
                                     onRatingUpdate: (rating) {},
                                   ),
                                 ],
