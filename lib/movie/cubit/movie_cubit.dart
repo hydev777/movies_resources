@@ -14,7 +14,9 @@ class MovieCubit extends Cubit<MovieState> {
 
   Future<void> onGetAllMovies() async {
     emit(
-      state.copyWith(moviesStatus: MoviesStatus.loading),
+      state.copyWith(
+        moviesStatus: MoviesStatus.loading,
+      ),
     );
 
     try {
@@ -28,7 +30,34 @@ class MovieCubit extends Cubit<MovieState> {
       );
     } catch (err) {
       emit(
-        state.copyWith(moviesStatus: MoviesStatus.error),
+        state.copyWith(
+          moviesStatus: MoviesStatus.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> onGetMovieById(String id) async {
+    emit(
+      state.copyWith(
+        movieDetailStatus: MovieDetailStatus.loading,
+      ),
+    );
+
+    try {
+      final movie = await _moviesRepositories.getMovieById(id);
+
+      emit(
+        state.copyWith(
+          movieDetailStatus: MovieDetailStatus.completed,
+          movieDetails: movie,
+        ),
+      );
+    } catch (err) {
+      emit(
+        state.copyWith(
+          movieDetailStatus: MovieDetailStatus.completed,
+        ),
       );
     }
   }

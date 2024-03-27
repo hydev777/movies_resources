@@ -11,6 +11,7 @@ class Movie extends Equatable {
     this.releaseDate,
     this.nodeId,
     this.userByUserCreatorId,
+    this.reviews,
   });
 
   final String? id;
@@ -20,16 +21,23 @@ class Movie extends Equatable {
   final String? releaseDate;
   final String? nodeId;
   final User? userByUserCreatorId;
+  final List<Review>? reviews;
 
   factory Movie.fromJson(Map<String, dynamic> json) => Movie(
-        id: json["id"],
-        imgUrl: json["imgUrl"],
-        movieDirectorIdl: json["movieDirectorIdl"],
-        title: json["title"],
-        releaseDate: json["releaseDate"],
-        nodeId: json["nodeId"],
-        userByUserCreatorId: User.fromJson(json["userByUserCreatorId"]),
-      );
+      id: json["id"],
+      imgUrl: json["imgUrl"],
+      movieDirectorIdl: json["movieDirectorIdl"],
+      title: json["title"],
+      releaseDate: json["releaseDate"],
+      nodeId: json["nodeId"],
+      userByUserCreatorId: User.fromJson(json["userByUserCreatorId"]),
+      reviews: json["reviews"] != null
+          ? (json["reviews"] as List<dynamic>)
+              .map(
+                (review) => Review.fromJson(review),
+              )
+              .toList()
+          : []);
 
   @override
   List<Object?> get props => [
@@ -40,5 +48,35 @@ class Movie extends Equatable {
         releaseDate,
         nodeId,
         userByUserCreatorId,
+        reviews,
+      ];
+}
+
+class Review extends Equatable {
+  const Review({
+    this.id,
+    this.title,
+    this.body,
+    this.movieId,
+  });
+
+  final String? id;
+  final String? title;
+  final String? body;
+  final String? movieId;
+
+  factory Review.fromJson(Map<String, dynamic> json) => Review(
+        id: json["id"],
+        title: json["title"],
+        body: json["body"],
+        movieId: json["movieId"],
+      );
+
+  @override
+  List<Object?> get props => [
+        id,
+        title,
+        body,
+        movieId,
       ];
 }
