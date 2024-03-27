@@ -120,9 +120,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                       Icons.star,
                                       color: Colors.amber,
                                     ),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
+                                    onRatingUpdate: (rating) {},
                                   ),
                                 ],
                               ),
