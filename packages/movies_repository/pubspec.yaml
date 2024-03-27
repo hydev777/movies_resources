@@ -1,12 +1,10 @@
 name: movies_repository
-description: A sample command-line application.
+description: Movies repository
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.3.2
 
-# Add regular dependencies here.
 dependencies:
   # path: ^1.8.0
   graphql_flutter: ^5.1.2

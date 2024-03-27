@@ -28,7 +28,7 @@ class Movie extends Equatable {
         title: json["title"],
         releaseDate: json["releaseDate"],
         nodeId: json["nodeId"],
-        userByUserCreatorId: json["userByUserCreatorId"],
+        userByUserCreatorId: User.fromJson(json["userByUserCreatorId"]),
       );
 
   @override

@@ -42,12 +42,15 @@ class MoviesRepositories {
         ),
       );
 
-      return (result.data!['allMovies'] as List<dynamic>)
+      print(result.data!['allMovies']['nodes']);
+
+      return (result.data!['allMovies']['nodes'] as List<dynamic>)
           .map(
             (movie) => Movie.fromJson(movie),
           )
           .toList();
     } catch (err) {
+      print(err);
       throw HttpException();
     }
   }
