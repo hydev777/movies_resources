@@ -94,6 +94,7 @@ class MoviesRepositories {
                 id,
                 title,
                 body,
+                rating,
                 movieId
               }
             }
@@ -108,6 +109,10 @@ class MoviesRepositories {
               .toList();
       (movieDetails.data!['movieById'] as Map<String, dynamic>)
           .addEntries({"reviews": reviewJson}.entries);
+
+      (movieDetails.data as Map<String, dynamic>).entries.forEach((value) {
+        print(value);
+      });
 
       return Movie.fromJson(movieDetails.data!['movieById']);
     } catch (err, stack) {

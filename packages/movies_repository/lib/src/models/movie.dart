@@ -11,7 +11,7 @@ class Movie extends Equatable {
     this.releaseDate,
     this.nodeId,
     this.userByUserCreatorId,
-    this.reviews,
+    this.reviews = const [],
   });
 
   final String? id;
@@ -57,18 +57,21 @@ class Review extends Equatable {
     this.id,
     this.title,
     this.body,
+    this.rating,
     this.movieId,
   });
 
   final String? id;
   final String? title;
   final String? body;
+  final int? rating;
   final String? movieId;
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
         id: json["id"],
         title: json["title"],
         body: json["body"],
+        rating: json["rating"],
         movieId: json["movieId"],
       );
 
@@ -77,6 +80,7 @@ class Review extends Equatable {
         id,
         title,
         body,
+        rating,
         movieId,
       ];
 }

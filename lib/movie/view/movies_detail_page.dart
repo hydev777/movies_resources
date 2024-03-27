@@ -1,6 +1,7 @@
 import 'package:coolmovies/movie/cubit/movie_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:movies_repository/movies_repository.dart';
 
 class MovieDetailPage extends StatelessWidget {
@@ -103,7 +104,28 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                           child: Card(
                             child: ListTile(
                               title: Text(review.title!),
-                              subtitle: Text(review.body!),
+                              subtitle: Column(
+                                children: [
+                                  Text(review.body!),
+                                  RatingBar.builder(
+                                    initialRating:
+                                        double.parse(review.rating.toString()),
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print(rating);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
