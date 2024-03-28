@@ -6,11 +6,11 @@ part 'movie_state.dart';
 
 class MovieCubit extends Cubit<MovieState> {
   MovieCubit({
-    required MoviesRepository moviesRepositories,
-  })  : _moviesRepositories = moviesRepositories,
+    required MoviesRepository moviesRepository,
+  })  : _moviesRepository = moviesRepository,
         super(const MovieState());
 
-  final MoviesRepository _moviesRepositories;
+  final MoviesRepository _moviesRepository;
 
   Future<void> onGetAllMovies() async {
     emit(
@@ -20,7 +20,7 @@ class MovieCubit extends Cubit<MovieState> {
     );
 
     try {
-      final movies = await _moviesRepositories.allMovies();
+      final movies = await _moviesRepository.allMovies();
 
       emit(
         state.copyWith(
@@ -45,7 +45,7 @@ class MovieCubit extends Cubit<MovieState> {
     );
 
     try {
-      final movie = await _moviesRepositories.getMovieById(id);
+      final movie = await _moviesRepository.getMovieById(id);
 
       emit(
         state.copyWith(
@@ -53,12 +53,57 @@ class MovieCubit extends Cubit<MovieState> {
           movieDetails: movie,
         ),
       );
+
+      print(
+          "========================>>> onGetMovieById MovieDetailStatus.completed");
     } catch (err) {
       emit(
         state.copyWith(
-          movieDetailStatus: MovieDetailStatus.completed,
+          movieDetailStatus: MovieDetailStatus.error,
         ),
       );
     }
+  }
+
+  Future<void> onCreateReview(
+    String title,
+    String body,
+    String movieId,
+    int rating,
+    String userReviewerId,
+  ) async {
+    emit(
+      state.copyWith(
+        createReviewStatus: CreateReviewStatus.loading,
+      ),
+    );
+
+    try {
+      await _moviesRepository.createReview(
+        title,
+        body,
+        movieId,
+        rating,
+        userReviewerId,
+      );
+
+      emit(
+        state.copyWith(
+          createReviewStatus: CreateReviewStatus.completed,
+        ),
+      );
+    } catch (err) {
+      emit(
+        state.copyWith(
+          createReviewStatus: CreateReviewStatus.error,
+        ),
+      );
+    }
+
+    emit(
+      state.copyWith(
+        createReviewStatus: CreateReviewStatus.initial,
+      ),
+    );
   }
 }

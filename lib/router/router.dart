@@ -1,3 +1,4 @@
+import 'package:coolmovies/users/view/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,7 +8,7 @@ import '../movie/view/movies_page.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 final appRouter = GoRouter(
-  initialLocation: '/movies',
+  initialLocation: '/users',
   navigatorKey: navigatorKey,
   routes: [
     GoRoute(
@@ -19,6 +20,10 @@ final appRouter = GoRouter(
       builder: (context, state) => MovieDetailPage(
         id: state.pathParameters['id'],
       ),
+    ),
+    GoRoute(
+      path: '/users',
+      builder: (context, state) => const UsersPage(),
     ),
   ],
 );
