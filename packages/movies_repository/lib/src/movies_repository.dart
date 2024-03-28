@@ -19,6 +19,7 @@ class MoviesRepository {
     try {
       result = await _graphQLClient.query(
         QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
           document: gql("""
           query AllMovies {
             allMovies {
@@ -60,7 +61,7 @@ class MoviesRepository {
     try {
       movieDetails = await _graphQLClient.query(
         QueryOptions(
-          fetchPolicy: FetchPolicy.cacheFirst,
+          fetchPolicy: FetchPolicy.noCache,
           document: gql('''
           {
               movieById(id: "$id") {
@@ -86,7 +87,7 @@ class MoviesRepository {
 
       reviews = await _graphQLClient.query(
         QueryOptions(
-          fetchPolicy: FetchPolicy.cacheFirst,
+          fetchPolicy: FetchPolicy.noCache,
           document: gql('''
           {
             allMovieReviews {
@@ -110,16 +111,6 @@ class MoviesRepository {
       (movieDetails.data!['movieById'] as Map<String, dynamic>)
           .addEntries({"reviews": reviewJson}.entries);
 
-      reviews.data!["allMovieReviews"]["nodes"].forEach((review) {
-        print("=====================>>> ${review['title']}");
-      });
-
-      print("=======================================================");
-
-      reviewJson.forEach((review) {
-        print("=====================>>> ${review['title']}");
-      });
-
       return Movie.fromJson(movieDetails.data!['movieById']);
     } catch (err, stack) {
       print(err);
@@ -136,9 +127,8 @@ class MoviesRepository {
     String userReviewerId,
   ) async {
     try {
-      await _graphQLClient.query(
-        QueryOptions(
-          fetchPolicy: FetchPolicy.cacheFirst,
+      await _graphQLClient.mutate(
+        MutationOptions(
           document: gql('''
                 mutation {
                     createMovieReview(input: {
@@ -170,6 +160,41 @@ class MoviesRepository {
           },
         ),
       );
+
+      // await _graphQLClient.query(
+      //   QueryOptions(
+      //     fetchPolicy: FetchPolicy.cacheFirst,
+      //     document: gql('''
+      //           mutation {
+      //               createMovieReview(input: {
+      //                   movieReview: {
+      //                       title: "$title", body: "$body", movieId: "$movieId", rating: $rating, userReviewerId: "$userReviewerId"
+      //                   }
+      //               }) {
+      //                   movieReview{
+      //                       id
+      //                       title
+      //                       body
+      //                       rating
+      //                       movieByMovieId {
+      //                           title
+      //                       }
+      //                       userByUserReviewerId {
+      //                           name
+      //                       }
+      //                   }
+      //               }
+      //           }
+      //   '''),
+      //     variables: {
+      //       'title': title,
+      //       'body': body,
+      //       'movieId': movieId,
+      //       'rating': rating,
+      //       'userReviewerId': userReviewerId,
+      //     },
+      //   ),
+      // );
     } catch (err) {
       print(err);
       throw HttpException();

@@ -49,9 +49,6 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
         body: BlocListener<MovieCubit, MovieState>(
           listener: (context, state) {
             if (state.createReviewStatus == CreateReviewStatus.completed) {
-              print(
-                  "======================>>> ${CreateReviewStatus.completed}");
-
               context.read<MovieCubit>().onGetMovieById(widget.id!);
             }
           },
@@ -119,7 +116,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                     .read<MovieCubit>()
                                     .onGetMovieById(widget.id!);
                               },
-                              icon: Icon(Icons.refresh),
+                              icon: const Icon(Icons.refresh),
                             ),
                             FilledButton.icon(
                               onPressed: () {
@@ -306,6 +303,10 @@ class _AddReviewPopUpState extends State<AddReviewPopUp> {
                           ratingCount,
                           currentUser!.id!,
                         );
+
+                    if (context.mounted) {
+                      context.pop();
+                    }
                   },
                   child: const Text('Send'),
                 ),

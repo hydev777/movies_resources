@@ -51,7 +51,7 @@ class UsersRepository {
     try {
       userDetails = await _graphQLClient.query(
         QueryOptions(
-          fetchPolicy: FetchPolicy.cacheFirst,
+          fetchPolicy: FetchPolicy.noCache,
           document: gql('''
         {
             userById(id: "$id") {
