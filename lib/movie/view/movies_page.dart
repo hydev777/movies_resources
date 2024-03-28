@@ -32,10 +32,25 @@ class MoviesBody extends StatefulWidget {
 
 class _MoviesBodyState extends State<MoviesBody> {
   @override
+  void initState() {
+    super.initState();
+
+    context.read<MovieCubit>().onGetAllMovies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Movies'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<MovieCubit>().onGetAllMovies();
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -44,14 +59,6 @@ class _MoviesBodyState extends State<MoviesBody> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                OutlinedButton.icon(
-                  onPressed: () {
-                    context.read<MovieCubit>().onGetAllMovies();
-                  },
-                  icon: const Icon(Icons.download),
-                  label: const Text('Fetch data'),
-                ),
-                const SizedBox(height: 16),
                 BlocBuilder<MovieCubit, MovieState>(builder: (context, state) {
                   if (state.moviesStatus == MoviesStatus.initial) {
                     return const Text('No movies fetched');
