@@ -110,14 +110,68 @@ class MoviesRepository {
       (movieDetails.data!['movieById'] as Map<String, dynamic>)
           .addEntries({"reviews": reviewJson}.entries);
 
-      (movieDetails.data as Map<String, dynamic>).entries.forEach((value) {
-        print(value);
+      reviews.data!["allMovieReviews"]["nodes"].forEach((review) {
+        print("=====================>>> ${review['title']}");
+      });
+
+      print("=======================================================");
+
+      reviewJson.forEach((review) {
+        print("=====================>>> ${review['title']}");
       });
 
       return Movie.fromJson(movieDetails.data!['movieById']);
     } catch (err, stack) {
       print(err);
       print(stack);
+      throw HttpException();
+    }
+  }
+
+  Future<void> createReview(
+    String title,
+    String body,
+    String movieId,
+    int rating,
+    String userReviewerId,
+  ) async {
+    try {
+      await _graphQLClient.query(
+        QueryOptions(
+          fetchPolicy: FetchPolicy.cacheFirst,
+          document: gql('''
+                mutation {
+                    createMovieReview(input: {
+                        movieReview: {
+                            title: "$title", body: "$body", movieId: "$movieId", rating: $rating, userReviewerId: "$userReviewerId"
+                        }
+                    }) {
+                        movieReview{
+                            id 
+                            title
+                            body
+                            rating
+                            movieByMovieId {
+                                title
+                            }
+                            userByUserReviewerId {
+                                name
+                            }
+                        }
+                    }
+                }
+        '''),
+          variables: {
+            'title': title,
+            'body': body,
+            'movieId': movieId,
+            'rating': rating,
+            'userReviewerId': userReviewerId,
+          },
+        ),
+      );
+    } catch (err) {
+      print(err);
       throw HttpException();
     }
   }

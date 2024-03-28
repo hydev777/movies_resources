@@ -65,9 +65,8 @@ class UsersRepository {
       );
 
       return User.fromJson(userDetails.data!['userById']);
-    } catch (err, stack) {
+    } catch (err) {
       print(err);
-      print(stack);
       throw HttpException();
     }
   }
