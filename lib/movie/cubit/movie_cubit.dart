@@ -6,11 +6,11 @@ part 'movie_state.dart';
 
 class MovieCubit extends Cubit<MovieState> {
   MovieCubit({
-    required MoviesRepositories moviesRepositories,
+    required MoviesRepository moviesRepositories,
   })  : _moviesRepositories = moviesRepositories,
         super(const MovieState());
 
-  final MoviesRepositories _moviesRepositories;
+  final MoviesRepository _moviesRepositories;
 
   Future<void> onGetAllMovies() async {
     emit(
