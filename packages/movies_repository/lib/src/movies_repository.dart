@@ -4,10 +4,10 @@ import 'models/models.dart';
 
 class HttpException implements Exception {}
 
-class MoviesRepositories {
+class MoviesRepository {
   final GraphQLClient graphQLClient;
 
-  MoviesRepositories({
+  MoviesRepository({
     required this.graphQLClient,
   }) : _graphQLClient = graphQLClient;
 

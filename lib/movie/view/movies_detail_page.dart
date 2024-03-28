@@ -14,7 +14,7 @@ class MovieDetailPage extends StatelessWidget {
     return BlocProvider(
       create: (context) {
         return MovieCubit(
-          moviesRepositories: context.read<MoviesRepositories>(),
+          moviesRepositories: context.read<MoviesRepository>(),
         );
       },
       child: MovieDetailBody(id: id),

@@ -17,7 +17,7 @@ void main() async {
     MultiProvider(
       providers: [
         Provider.value(
-          value: MoviesRepositories(
+          value: MoviesRepository(
             graphQLClient: GraphQLClient(
               link: httpLink,
               cache: GraphQLCache(store: InMemoryStore()),
