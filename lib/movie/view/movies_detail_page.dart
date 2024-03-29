@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -38,6 +40,8 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
   @override
   void initState() {
     super.initState();
+    print(context.read<UsersCubit>().state.currentUser);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<MovieCubit>().onGetMovieById(widget.id!);
     });
@@ -45,7 +49,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<UsersCubit>().state.currentUser;
+    final currentUser = context.watch<UsersCubit>().state.currentUser;
 
     return SafeArea(
       child: Scaffold(
@@ -161,10 +165,26 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                     Text(review.title!),
                                     currentUser!.id == review.userReviewerId
                                         ? IconButton(
-                                            onPressed: () {
-                                              context
-                                                  .read<MovieCubit>()
-                                                  .onDeleteReview(review.id!);
+                                            onPressed: () async {
+                                              try {
+                                                final result =
+                                                    await InternetAddress
+                                                        .lookup('example.com');
+                                                if (result.isNotEmpty &&
+                                                    result[0]
+                                                        .rawAddress
+                                                        .isNotEmpty) {
+                                                  context
+                                                      .read<MovieCubit>()
+                                                      .onDeleteReview(
+                                                          review.id!);
+                                                } else {
+                                                  print('not connected');
+                                                }
+                                              } catch (err) {
+                                                print(err);
+                                                print('not connected');
+                                              }
                                             },
                                             icon: const Icon(Icons.delete),
                                           )

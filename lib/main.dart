@@ -1,9 +1,14 @@
 import 'dart:io';
 
 import 'package:coolmovies/app/app.dart';
-import 'package:coolmovies/provider_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:movies_repository/movies_repository.dart';
+import 'package:provider/provider.dart';
+import 'package:users_repository/users_repository.dart';
+
+import 'users/cubit/users_cubit.dart';
 
 void main() async {
   final HttpLink httpLink = HttpLink(
@@ -22,11 +27,22 @@ void main() async {
   );
 
   runApp(
-    GraphQLProvider(
-      client: client,
-      child: const ProviderWrapper(
-        child: MyApp(),
-      ),
+    MultiProvider(
+      providers: [
+        Provider.value(
+          value: MoviesRepository(
+            graphQLClient: client.value,
+          ),
+        ),
+        BlocProvider.value(
+          value: UsersCubit(
+            usersRepository: UsersRepository(
+              graphQLClient: client.value,
+            ),
+          ),
+        )
+      ],
+      child: const MyApp(),
     ),
   );
 }
