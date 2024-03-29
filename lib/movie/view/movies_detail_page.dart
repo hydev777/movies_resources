@@ -39,17 +39,23 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<MovieCubit>().onGetMovieById(widget.id!);
+      context.read<MovieCubit>().onGetMovieById(widget.id!);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<UsersCubit>().state.currentUser;
+
     return SafeArea(
       child: Scaffold(
         body: BlocListener<MovieCubit, MovieState>(
           listener: (context, state) {
             if (state.createReviewStatus == CreateReviewStatus.completed) {
+              context.read<MovieCubit>().onGetMovieById(widget.id!);
+            }
+
+            if (state.deleteReviewStatus == DeleteReviewStatus.completed) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
             }
           },
@@ -148,7 +154,23 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                           (review) => SliverToBoxAdapter(
                             child: Card(
                               child: ListTile(
-                                title: Text(review.title!),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(review.title!),
+                                    currentUser!.id == review.userReviewerId
+                                        ? IconButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<MovieCubit>()
+                                                  .onDeleteReview(review.id!);
+                                            },
+                                            icon: const Icon(Icons.delete),
+                                          )
+                                        : const SizedBox.shrink()
+                                  ],
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

@@ -6,11 +6,14 @@ enum MovieDetailStatus { initial, loading, completed, empty, error }
 
 enum CreateReviewStatus { initial, loading, completed, empty, error }
 
+enum DeleteReviewStatus { initial, loading, completed, empty, error }
+
 class MovieState extends Equatable {
   const MovieState({
     this.moviesStatus = MoviesStatus.initial,
     this.movieDetailStatus = MovieDetailStatus.initial,
     this.createReviewStatus = CreateReviewStatus.initial,
+    this.deleteReviewStatus = DeleteReviewStatus.initial,
     this.movies = const [],
     this.movieDetails,
   });
@@ -18,6 +21,7 @@ class MovieState extends Equatable {
   final MoviesStatus? moviesStatus;
   final MovieDetailStatus? movieDetailStatus;
   final CreateReviewStatus? createReviewStatus;
+  final DeleteReviewStatus? deleteReviewStatus;
   final List<Movie>? movies;
   final Movie? movieDetails;
 
@@ -25,6 +29,7 @@ class MovieState extends Equatable {
     MoviesStatus? moviesStatus,
     MovieDetailStatus? movieDetailStatus,
     CreateReviewStatus? createReviewStatus,
+    DeleteReviewStatus? deleteReviewStatus,
     List<Movie>? movies,
     Movie? movieDetails,
   }) {
@@ -32,6 +37,7 @@ class MovieState extends Equatable {
       moviesStatus: moviesStatus ?? this.moviesStatus,
       movieDetailStatus: movieDetailStatus ?? this.movieDetailStatus,
       createReviewStatus: createReviewStatus ?? this.createReviewStatus,
+      deleteReviewStatus: deleteReviewStatus ?? this.deleteReviewStatus,
       movies: movies ?? this.movies,
       movieDetails: movieDetails ?? this.movieDetails,
     );
@@ -42,6 +48,7 @@ class MovieState extends Equatable {
         moviesStatus,
         movieDetailStatus,
         createReviewStatus,
+        deleteReviewStatus,
         movies,
         movieDetails,
       ];

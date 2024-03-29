@@ -102,6 +102,7 @@ class MoviesRepository {
                                     body
                                     rating
                                     movieId
+                                    userReviewerId
                                 }
                         }
                     }
@@ -165,6 +166,45 @@ class MoviesRepository {
           },
         ),
       );
+    } catch (err) {
+      print(err);
+      throw HttpException();
+    }
+  }
+
+  Future<void> deleteMovieReviewById(
+    String id,
+  ) async {
+    try {
+      final deletedReview = await _graphQLClient.mutate(
+        MutationOptions(
+          document: gql('''
+                  mutation {
+                      deleteMovieReviewById(input: {
+                          id: "$id"
+                      }) {
+                          movieReview{
+                              id 
+                              title
+                              body
+                              rating
+                              movieByMovieId {
+                                  title
+                              }
+                              userByUserReviewerId {
+                                  name
+                              }
+                          }
+                      }
+                  }
+        '''),
+          variables: {
+            'id': id,
+          },
+        ),
+      );
+
+      print(deletedReview);
     } catch (err) {
       print(err);
       throw HttpException();

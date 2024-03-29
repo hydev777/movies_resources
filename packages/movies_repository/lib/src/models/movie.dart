@@ -59,6 +59,7 @@ class Review extends Equatable {
     this.body,
     this.rating,
     this.movieId,
+    this.userReviewerId,
   });
 
   final String? id;
@@ -66,6 +67,7 @@ class Review extends Equatable {
   final String? body;
   final int? rating;
   final String? movieId;
+  final String? userReviewerId;
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
         id: json["id"],
@@ -73,6 +75,7 @@ class Review extends Equatable {
         body: json["body"],
         rating: json["rating"],
         movieId: json["movieId"],
+        userReviewerId: json["userReviewerId"],
       );
 
   @override
@@ -82,5 +85,6 @@ class Review extends Equatable {
         body,
         rating,
         movieId,
+        userReviewerId,
       ];
 }

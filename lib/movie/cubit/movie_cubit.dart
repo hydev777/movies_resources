@@ -103,4 +103,38 @@ class MovieCubit extends Cubit<MovieState> {
       ),
     );
   }
+
+  Future<void> onDeleteReview(
+    String id,
+  ) async {
+    emit(
+      state.copyWith(
+        deleteReviewStatus: DeleteReviewStatus.loading,
+      ),
+    );
+
+    try {
+      await _moviesRepository.deleteMovieReviewById(
+        id,
+      );
+
+      emit(
+        state.copyWith(
+          deleteReviewStatus: DeleteReviewStatus.completed,
+        ),
+      );
+    } catch (err) {
+      emit(
+        state.copyWith(
+          deleteReviewStatus: DeleteReviewStatus.error,
+        ),
+      );
+    }
+
+    emit(
+      state.copyWith(
+        deleteReviewStatus: DeleteReviewStatus.initial,
+      ),
+    );
+  }
 }
