@@ -53,9 +53,6 @@ class MovieCubit extends Cubit<MovieState> {
           movieDetails: movie,
         ),
       );
-
-      print(
-          "========================>>> onGetMovieById MovieDetailStatus.completed");
     } catch (err) {
       emit(
         state.copyWith(

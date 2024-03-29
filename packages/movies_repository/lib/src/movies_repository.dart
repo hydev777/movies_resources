@@ -89,27 +89,32 @@ class MoviesRepository {
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,
           document: gql('''
-          {
-            allMovieReviews {
-              nodes {
-                id,
-                title,
-                body,
-                rating,
-                movieId
-              }
-            }
-        }
+                    query {
+                        allMovieReviews(filter: {
+                            movieId: {
+                                equalTo: "$id"
+                            }
+                            }
+                            ) {
+                                nodes {
+                                    id
+                                    title
+                                    body
+                                    rating
+                                    movieId
+                                }
+                        }
+                    }
         '''),
+          variables: {'id': id},
         ),
       );
 
-      final reviewJson =
-          (reviews.data!['allMovieReviews']['nodes'] as List<dynamic>)
-              .where((review) => review['movieId'] == id)
-              .toList();
+      final reviewsJson =
+          (reviews.data!['allMovieReviews']['nodes'] as List<dynamic>).toList();
+
       (movieDetails.data!['movieById'] as Map<String, dynamic>)
-          .addEntries({"reviews": reviewJson}.entries);
+          .addEntries({"reviews": reviewsJson}.entries);
 
       return Movie.fromJson(movieDetails.data!['movieById']);
     } catch (err, stack) {
@@ -160,41 +165,6 @@ class MoviesRepository {
           },
         ),
       );
-
-      // await _graphQLClient.query(
-      //   QueryOptions(
-      //     fetchPolicy: FetchPolicy.cacheFirst,
-      //     document: gql('''
-      //           mutation {
-      //               createMovieReview(input: {
-      //                   movieReview: {
-      //                       title: "$title", body: "$body", movieId: "$movieId", rating: $rating, userReviewerId: "$userReviewerId"
-      //                   }
-      //               }) {
-      //                   movieReview{
-      //                       id
-      //                       title
-      //                       body
-      //                       rating
-      //                       movieByMovieId {
-      //                           title
-      //                       }
-      //                       userByUserReviewerId {
-      //                           name
-      //                       }
-      //                   }
-      //               }
-      //           }
-      //   '''),
-      //     variables: {
-      //       'title': title,
-      //       'body': body,
-      //       'movieId': movieId,
-      //       'rating': rating,
-      //       'userReviewerId': userReviewerId,
-      //     },
-      //   ),
-      // );
     } catch (err) {
       print(err);
       throw HttpException();

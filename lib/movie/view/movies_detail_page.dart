@@ -1,10 +1,11 @@
-import 'package:coolmovies/movie/cubit/movie_cubit.dart';
-import 'package:coolmovies/users/cubit/users_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movies_repository/movies_repository.dart';
+
+import '../../users/cubit/users_cubit.dart';
+import '../cubit/movie_cubit.dart';
 
 class MovieDetailPage extends StatelessWidget {
   const MovieDetailPage({Key? key, this.id}) : super(key: key);
@@ -225,10 +226,11 @@ class _AddReviewPopUpState extends State<AddReviewPopUp> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         height: 450,
         decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
-            )),
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
         child: Column(
           children: [
             const Text(
