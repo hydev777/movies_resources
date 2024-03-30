@@ -8,6 +8,7 @@ import 'package:movies_repository/movies_repository.dart';
 
 import '../../users/cubit/users_cubit.dart';
 import '../cubit/movie_cubit.dart';
+import 'add_review_popup.dart';
 
 class MovieDetailPage extends StatelessWidget {
   const MovieDetailPage({Key? key, this.id}) : super(key: key);
@@ -37,11 +38,45 @@ class MovieDetailBody extends StatefulWidget {
 }
 
 class _MovieDetailBodyState extends State<MovieDetailBody> {
+  void successDialog(String body) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Success'),
+        content: Text(body),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
+  void errorDialog(String body) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(body),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    print(context.read<UsersCubit>().state.currentUser);
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<MovieCubit>().onGetMovieById(widget.id!);
     });
@@ -55,12 +90,28 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
       child: Scaffold(
         body: BlocListener<MovieCubit, MovieState>(
           listener: (context, state) {
+            if (state.createReviewStatus == CreateReviewStatus.error) {
+              context.read<MovieCubit>().onGetMovieById(widget.id!);
+
+              errorDialog('An error ocurred creating your review!');
+            }
+
             if (state.createReviewStatus == CreateReviewStatus.completed) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
+
+              successDialog('Your Review has been added!');
+            }
+
+            if (state.deleteReviewStatus == DeleteReviewStatus.error) {
+              context.read<MovieCubit>().onGetMovieById(widget.id!);
+
+              errorDialog('An error ocurred deleting your review!');
             }
 
             if (state.deleteReviewStatus == DeleteReviewStatus.completed) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
+
+              successDialog('Review has been deleted!');
             }
           },
           child: BlocBuilder<MovieCubit, MovieState>(
@@ -84,23 +135,23 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                       stretchTriggerOffset: 300.0,
                       expandedHeight: 250.0,
                       flexibleSpace: FlexibleSpaceBar(
-                        background: Hero(
-                          tag: "hero-movie-${widget.id}",
-                          child: Image.network(
-                            movieDetails!.imgUrl!,
-                            fit: BoxFit.cover,
-                          ),
+                        background: Image.network(
+                          movieDetails!.imgUrl!,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.all(5),
-                        child: Text(
-                          movieDetails.title!,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                        child: Hero(
+                          tag: 'hero-movie-title-${widget.id}',
+                          child: Text(
+                            movieDetails.title!,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -112,23 +163,8 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                           vertical: 5,
                         ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text(
-                              "Reviews",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () {
-                                context
-                                    .read<MovieCubit>()
-                                    .onGetMovieById(widget.id!);
-                              },
-                              icon: const Icon(Icons.refresh),
-                            ),
                             FilledButton.icon(
                               onPressed: () {
                                 final movieCubit = context.read<MovieCubit>();
@@ -174,16 +210,17 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                                     result[0]
                                                         .rawAddress
                                                         .isNotEmpty) {
-                                                  context
-                                                      .read<MovieCubit>()
-                                                      .onDeleteReview(
-                                                          review.id!);
-                                                } else {
-                                                  print('not connected');
+                                                  if (context.mounted) {
+                                                    context
+                                                        .read<MovieCubit>()
+                                                        .onDeleteReview(
+                                                            review.id!);
+                                                  }
                                                 }
                                               } catch (err) {
+                                                errorDialog(
+                                                    'Not internet connection');
                                                 print(err);
-                                                print('not connected');
                                               }
                                             },
                                             icon: const Icon(Icons.delete),
@@ -238,125 +275,6 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
               );
             },
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class AddReviewPopUp extends StatefulWidget {
-  const AddReviewPopUp({
-    super.key,
-    this.movieId,
-  });
-
-  final String? movieId;
-
-  @override
-  State<AddReviewPopUp> createState() => _AddReviewPopUpState();
-}
-
-class _AddReviewPopUpState extends State<AddReviewPopUp> {
-  int ratingCount = 1;
-  String title = '';
-  String body = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        height: 450,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-        ),
-        child: Column(
-          children: [
-            const Text(
-              'Your Review',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              decoration: const InputDecoration(hintText: 'Title'),
-              onChanged: (value) {
-                setState(() {
-                  title = value;
-                });
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              decoration: const InputDecoration(hintText: 'Body'),
-              onChanged: (value) {
-                setState(() {
-                  body = value;
-                });
-              },
-              maxLines: 6,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            RatingBar.builder(
-              initialRating: 1,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              tapOnlyMode: true,
-              itemSize: 30,
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                ratingCount = int.parse(rating.toInt().toString()).round();
-              },
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final currentUser =
-                        context.read<UsersCubit>().state.currentUser;
-
-                    await context.read<MovieCubit>().onCreateReview(
-                          title,
-                          body,
-                          widget.movieId!,
-                          ratingCount,
-                          currentUser!.id!,
-                        );
-
-                    if (context.mounted) {
-                      context.pop();
-                    }
-                  },
-                  child: const Text('Send'),
-                ),
-              ],
-            )
-          ],
         ),
       ),
     );

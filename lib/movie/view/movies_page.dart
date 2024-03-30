@@ -73,7 +73,10 @@ class _MoviesBodyState extends State<MoviesBody> {
                             .map(
                               (movie) => Card(
                                 child: ListTile(
-                                  title: Text(movie.title!),
+                                  title: Hero(
+                                    tag: 'hero-movie-title-${movie.id}',
+                                    child: Text(movie.title!),
+                                  ),
                                   onTap: () {
                                     context.push('/movies/${movie.id}');
                                   },

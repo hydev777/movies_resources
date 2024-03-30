@@ -19,7 +19,7 @@ class UsersRepository {
     try {
       usersList = await _graphQLClient.query(
         QueryOptions(
-          fetchPolicy: FetchPolicy.cacheFirst,
+          fetchPolicy: FetchPolicy.noCache,
           document: gql('''
         {
             allUsers {

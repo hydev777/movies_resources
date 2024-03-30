@@ -14,12 +14,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/movies',
       builder: (context, state) => const MoviesPage(),
-    ),
-    GoRoute(
-      path: '/movies/:id',
-      builder: (context, state) => MovieDetailPage(
-        id: state.pathParameters['id'],
-      ),
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (context, state) => MovieDetailPage(
+            id: state.pathParameters['id'],
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: '/users',

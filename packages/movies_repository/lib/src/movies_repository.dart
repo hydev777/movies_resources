@@ -118,9 +118,8 @@ class MoviesRepository {
           .addEntries({"reviews": reviewsJson}.entries);
 
       return Movie.fromJson(movieDetails.data!['movieById']);
-    } catch (err, stack) {
+    } catch (err) {
       print(err);
-      print(stack);
       throw HttpException();
     }
   }
@@ -176,7 +175,7 @@ class MoviesRepository {
     String id,
   ) async {
     try {
-      final deletedReview = await _graphQLClient.mutate(
+      await _graphQLClient.mutate(
         MutationOptions(
           document: gql('''
                   mutation {
@@ -203,8 +202,6 @@ class MoviesRepository {
           },
         ),
       );
-
-      print(deletedReview);
     } catch (err) {
       print(err);
       throw HttpException();
