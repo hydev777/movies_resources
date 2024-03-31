@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:users_repository/users_repository.dart';
 
@@ -60,25 +61,36 @@ class _UsersBodyState extends State<UsersBody> {
                   if (state.userStatus == UserStatus.completed) {
                     final users = state.users;
 
-                    return Column(
-                      children: [
-                        ...users!
-                            .map(
-                              (user) => Card(
-                                child: ListTile(
-                                  title: Text(user.name!),
-                                  onTap: () {
-                                    context.read<UsersCubit>().user = User(
-                                      id: user.id,
-                                      name: user.name,
-                                    );
-                                    context.push('/movies');
-                                  },
-                                ),
-                              ),
-                            )
-                            .toList()
-                      ],
+                    return AnimationLimiter(
+                      child: Column(
+                        children: AnimationConfiguration.toStaggeredList(
+                          duration: const Duration(milliseconds: 375),
+                          childAnimationBuilder: (widget) => SlideAnimation(
+                            horizontalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: widget,
+                            ),
+                          ),
+                          children: [
+                            ...users!
+                                .map(
+                                  (user) => Card(
+                                    child: ListTile(
+                                      title: Text(user.name!),
+                                      onTap: () {
+                                        context.read<UsersCubit>().user = User(
+                                          id: user.id,
+                                          name: user.name,
+                                        );
+                                        context.push('/movies');
+                                      },
+                                    ),
+                                  ),
+                                )
+                                .toList()
+                          ],
+                        ),
+                      ),
                     );
                   }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movies_repository/movies_repository.dart';
 
@@ -221,7 +222,6 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                               } catch (err) {
                                                 errorDialog(
                                                     'Not internet connection');
-                                                print(err);
                                               }
                                             },
                                             icon: const Icon(Icons.delete),
@@ -229,32 +229,49 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                                         : const SizedBox.shrink()
                                   ],
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(review.body!),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    RatingBar.builder(
-                                      updateOnDrag: false,
-                                      initialRating: double.parse(
-                                          review.rating.toString()),
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0),
-                                      itemSize: 30,
-                                      itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
+                                subtitle: AnimationLimiter(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children:
+                                        AnimationConfiguration.toStaggeredList(
+                                      duration:
+                                          const Duration(milliseconds: 375),
+                                      childAnimationBuilder: (widget) =>
+                                          FadeInAnimation(
+                                        child: FadeInAnimation(
+                                          child: widget,
+                                        ),
                                       ),
-                                      ignoreGestures: true,
-                                      onRatingUpdate: (rating) {},
+                                      children: [
+                                        Text(review.body!),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        RatingBar.builder(
+                                          updateOnDrag: false,
+                                          initialRating: double.parse(
+                                            review.rating.toString(),
+                                          ),
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 4.0),
+                                          itemSize: 30,
+                                          itemBuilder: (context, _) =>
+                                              const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          ignoreGestures: true,
+                                          onRatingUpdate: (rating) {},
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),

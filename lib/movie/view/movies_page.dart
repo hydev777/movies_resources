@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movies_repository/movies_repository.dart';
 
@@ -67,31 +68,42 @@ class _MoviesBodyState extends State<MoviesBody> {
                   if (state.moviesStatus == MoviesStatus.completed) {
                     final movies = state.movies;
 
-                    return Column(
-                      children: [
-                        ...movies!
-                            .map(
-                              (movie) => Card(
-                                child: ListTile(
-                                  title: Hero(
-                                    tag: 'hero-movie-title-${movie.id}',
-                                    child: Text(
-                                      movie.title!,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal,
+                    return AnimationLimiter(
+                      child: Column(
+                        children: AnimationConfiguration.toStaggeredList(
+                          duration: const Duration(milliseconds: 375),
+                          childAnimationBuilder: (widget) => SlideAnimation(
+                            horizontalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: widget,
+                            ),
+                          ),
+                          children: [
+                            ...movies!
+                                .map(
+                                  (movie) => Card(
+                                    child: ListTile(
+                                      title: Hero(
+                                        tag: 'hero-movie-title-${movie.id}',
+                                        child: Text(
+                                          movie.title!,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
                                       ),
+                                      onTap: () {
+                                        context.push('/movies/${movie.id}');
+                                      },
                                     ),
                                   ),
-                                  onTap: () {
-                                    context.push('/movies/${movie.id}');
-                                  },
-                                ),
-                              ),
-                            )
-                            .toList()
-                      ],
+                                )
+                                .toList()
+                          ],
+                        ),
+                      ),
                     );
                   }
 
