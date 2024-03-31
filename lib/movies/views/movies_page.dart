@@ -1,46 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:go_router/go_router.dart';
-import 'package:users_repository/users_repository.dart';
+import 'package:movies_repository/movies_repository.dart';
 
-import '../cubit/users_cubit.dart';
+import '../cubit/movie_cubit.dart';
+import '../widgets/widgets.dart';
 
-class UsersPage extends StatelessWidget {
-  const UsersPage({Key? key}) : super(key: key);
+class MoviesPage extends StatelessWidget {
+  const MoviesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const UsersBody();
+    return BlocProvider(
+      create: (context) {
+        return MovieCubit(
+          moviesRepository: context.read<MoviesRepository>(),
+        );
+      },
+      child: const MoviesBody(),
+    );
   }
 }
 
-class UsersBody extends StatefulWidget {
-  const UsersBody({
+class MoviesBody extends StatefulWidget {
+  const MoviesBody({
     super.key,
   });
 
   @override
-  State<UsersBody> createState() => _UsersBodyState();
+  State<MoviesBody> createState() => _MoviesBodyState();
 }
 
-class _UsersBodyState extends State<UsersBody> {
+class _MoviesBodyState extends State<MoviesBody> {
   @override
   void initState() {
     super.initState();
 
-    context.read<UsersCubit>().onGetAllUsers();
+    context.read<MovieCubit>().onGetAllMovies();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Users'),
+        title: const Text('Movies'),
         actions: [
           IconButton(
             onPressed: () {
-              context.read<UsersCubit>().onGetAllUsers();
+              context.read<MovieCubit>().onGetAllMovies();
             },
             icon: const Icon(Icons.refresh),
           ),
@@ -53,13 +60,13 @@ class _UsersBodyState extends State<UsersBody> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                BlocBuilder<UsersCubit, UsersState>(builder: (context, state) {
-                  if (state.userStatus == UserStatus.initial) {
+                BlocBuilder<MovieCubit, MovieState>(builder: (context, state) {
+                  if (state.moviesStatus == MoviesStatus.initial) {
                     return const Text('No movies fetched');
                   }
 
-                  if (state.userStatus == UserStatus.completed) {
-                    final users = state.users;
+                  if (state.moviesStatus == MoviesStatus.completed) {
+                    final movies = state.movies;
 
                     return AnimationLimiter(
                       child: Column(
@@ -72,19 +79,10 @@ class _UsersBodyState extends State<UsersBody> {
                             ),
                           ),
                           children: [
-                            ...users!
+                            ...movies!
                                 .map(
-                                  (user) => Card(
-                                    child: ListTile(
-                                      title: Text(user.name!),
-                                      onTap: () {
-                                        context.read<UsersCubit>().user = User(
-                                          id: user.id,
-                                          name: user.name,
-                                        );
-                                        context.push('/movies');
-                                      },
-                                    ),
+                                  (movie) => MovieCard(
+                                    movie: movie,
                                   ),
                                 )
                                 .toList()
@@ -94,19 +92,19 @@ class _UsersBodyState extends State<UsersBody> {
                     );
                   }
 
-                  if (state.userStatus == UserStatus.loading) {
+                  if (state.moviesStatus == MoviesStatus.loading) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  if (state.userStatus == UserStatus.empty) {
+                  if (state.moviesStatus == MoviesStatus.empty) {
                     return const Center(
                       child: Text("No movies available"),
                     );
                   }
 
-                  if (state.userStatus == UserStatus.error) {
+                  if (state.moviesStatus == MoviesStatus.error) {
                     return const Center(
                       child: Text("An error has ocurred"),
                     );

@@ -12,7 +12,7 @@ class UsersCubit extends Cubit<UsersState> {
 
   final UsersRepository _usersRepository;
 
-  set user(User user) {
+  set currentUser(User user) {
     emit(
       state.copyWith(
         currentUser: user,

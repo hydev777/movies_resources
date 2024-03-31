@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:go_router/go_router.dart';
 import 'package:movies_repository/movies_repository.dart';
 
 import '../../users/cubit/users_cubit.dart';
 import '../cubit/movie_cubit.dart';
-import 'add_review_popup.dart';
+import '../../utils/utils.dart';
+import '../widgets/widgets.dart';
 
 class MovieDetailPage extends StatelessWidget {
   const MovieDetailPage({Key? key, this.id}) : super(key: key);
@@ -39,42 +35,6 @@ class MovieDetailBody extends StatefulWidget {
 }
 
 class _MovieDetailBodyState extends State<MovieDetailBody> {
-  void successDialog(String body) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Success'),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () {
-              context.pop();
-            },
-            child: const Text('OK'),
-          )
-        ],
-      ),
-    );
-  }
-
-  void errorDialog(String body) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () {
-              context.pop();
-            },
-            child: const Text('OK'),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -94,25 +54,25 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
             if (state.createReviewStatus == CreateReviewStatus.error) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
 
-              errorDialog('An error ocurred creating your review!');
+              errorDialog('An error ocurred creating your review!', context);
             }
 
             if (state.createReviewStatus == CreateReviewStatus.completed) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
 
-              successDialog('Your Review has been added!');
+              successDialog('Your Review has been added!', context);
             }
 
             if (state.deleteReviewStatus == DeleteReviewStatus.error) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
 
-              errorDialog('An error ocurred deleting your review!');
+              errorDialog('An error ocurred deleting your review!', context);
             }
 
             if (state.deleteReviewStatus == DeleteReviewStatus.completed) {
               context.read<MovieCubit>().onGetMovieById(widget.id!);
 
-              successDialog('Review has been deleted!');
+              successDialog('Review has been deleted!', context);
             }
           },
           child: BlocBuilder<MovieCubit, MovieState>(
@@ -194,86 +154,9 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                     ...movieDetails.reviews!
                         .map(
                           (review) => SliverToBoxAdapter(
-                            child: Card(
-                              child: ListTile(
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(review.title!),
-                                    currentUser!.id == review.userReviewerId
-                                        ? IconButton(
-                                            onPressed: () async {
-                                              try {
-                                                final result =
-                                                    await InternetAddress
-                                                        .lookup('example.com');
-                                                if (result.isNotEmpty &&
-                                                    result[0]
-                                                        .rawAddress
-                                                        .isNotEmpty) {
-                                                  if (context.mounted) {
-                                                    context
-                                                        .read<MovieCubit>()
-                                                        .onDeleteReview(
-                                                            review.id!);
-                                                  }
-                                                }
-                                              } catch (err) {
-                                                errorDialog(
-                                                    'Not internet connection');
-                                              }
-                                            },
-                                            icon: const Icon(Icons.delete),
-                                          )
-                                        : const SizedBox.shrink()
-                                  ],
-                                ),
-                                subtitle: AnimationLimiter(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        AnimationConfiguration.toStaggeredList(
-                                      duration:
-                                          const Duration(milliseconds: 375),
-                                      childAnimationBuilder: (widget) =>
-                                          FadeInAnimation(
-                                        child: FadeInAnimation(
-                                          child: widget,
-                                        ),
-                                      ),
-                                      children: [
-                                        Text(review.body!),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        RatingBar.builder(
-                                          updateOnDrag: false,
-                                          initialRating: double.parse(
-                                            review.rating.toString(),
-                                          ),
-                                          minRating: 1,
-                                          direction: Axis.horizontal,
-                                          allowHalfRating: true,
-                                          itemCount: 5,
-                                          itemPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 4.0),
-                                          itemSize: 30,
-                                          itemBuilder: (context, _) =>
-                                              const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                          ),
-                                          ignoreGestures: true,
-                                          onRatingUpdate: (rating) {},
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            child: ReviewCard(
+                              currentUser: currentUser!,
+                              review: review,
                             ),
                           ),
                         )
