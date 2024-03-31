@@ -14,19 +14,35 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/movies',
-      builder: (context, state) => const MoviesPage(),
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const MoviesPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
       routes: [
         GoRoute(
           path: ':id',
-          builder: (context, state) => MovieDetailPage(
-            id: state.pathParameters['id'],
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: MovieDetailPage(
+              id: state.pathParameters['id'],
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
       ],
     ),
     GoRoute(
       path: '/users',
-      builder: (context, state) => const UsersPage(),
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const UsersPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
     ),
   ],
 );
