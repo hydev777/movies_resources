@@ -75,7 +75,14 @@ class _MoviesBodyState extends State<MoviesBody> {
                                 child: ListTile(
                                   title: Hero(
                                     tag: 'hero-movie-title-${movie.id}',
-                                    child: Text(movie.title!),
+                                    child: Text(
+                                      movie.title!,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
                                   ),
                                   onTap: () {
                                     context.push('/movies/${movie.id}');

@@ -149,6 +149,7 @@ class _MovieDetailBodyState extends State<MovieDetailBody> {
                           child: Text(
                             movieDetails.title!,
                             style: const TextStyle(
+                              color: Colors.black,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),

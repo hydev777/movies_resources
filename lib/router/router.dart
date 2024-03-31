@@ -6,6 +6,7 @@ import '../movie/view/movies_detail_page.dart';
 import '../movie/view/movies_page.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> _nestedKey = GlobalKey<NavigatorState>();
 
 final appRouter = GoRouter(
   initialLocation: '/users',

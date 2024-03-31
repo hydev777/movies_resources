@@ -22,6 +22,7 @@ class _AddReviewPopUpState extends State<AddReviewPopUp> {
   int ratingCount = 1;
   String title = '';
   String body = '';
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,90 +36,107 @@ class _AddReviewPopUpState extends State<AddReviewPopUp> {
             Radius.circular(10),
           ),
         ),
-        child: Column(
-          children: [
-            const Text(
-              'Your Review',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              decoration: const InputDecoration(hintText: 'Title'),
-              onChanged: (value) {
-                setState(() {
-                  title = value;
-                });
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              decoration: const InputDecoration(hintText: 'Body'),
-              onChanged: (value) {
-                setState(() {
-                  body = value;
-                });
-              },
-              maxLines: 6,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            RatingBar.builder(
-              initialRating: 1,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              tapOnlyMode: true,
-              itemSize: 30,
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                ratingCount = int.parse(rating.toInt().toString()).round();
-              },
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  child: const Text('Cancel'),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const Text(
+                'Your Review',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextButton(
-                  onPressed: () async {
-                    final currentUser =
-                        context.read<UsersCubit>().state.currentUser;
-
-                    await context.read<MovieCubit>().onCreateReview(
-                          title,
-                          body,
-                          widget.movieId!,
-                          ratingCount,
-                          currentUser!.id!,
-                        );
-
-                    if (context.mounted) {
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'Title'),
+                onChanged: (value) {
+                  setState(() {
+                    title = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the review\'s title';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'Body'),
+                onChanged: (value) {
+                  setState(() {
+                    body = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the review\'s body';
+                  }
+                  return null;
+                },
+                maxLines: 6,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              RatingBar.builder(
+                initialRating: 1,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                tapOnlyMode: true,
+                itemSize: 30,
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  ratingCount = int.parse(rating.toInt().toString()).round();
+                },
+              ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
                       context.pop();
-                    }
-                  },
-                  child: const Text('Send'),
-                ),
-              ],
-            )
-          ],
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        final currentUser =
+                            context.read<UsersCubit>().state.currentUser;
+
+                        await context.read<MovieCubit>().onCreateReview(
+                              title,
+                              body,
+                              widget.movieId!,
+                              ratingCount,
+                              currentUser!.id!,
+                            );
+
+                        if (context.mounted) {
+                          context.pop();
+                        }
+                      }
+                    },
+                    child: const Text('Send'),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
