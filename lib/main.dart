@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:coolmovies/app/app.dart';
+import 'package:coolmovies/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -17,12 +17,10 @@ void main() async {
         : 'http://localhost:5001/graphql',
   );
 
-  ValueNotifier<GraphQLClient> client = ValueNotifier(
-    GraphQLClient(
-      link: httpLink,
-      cache: GraphQLCache(
-        store: InMemoryStore(),
-      ),
+  GraphQLClient client = GraphQLClient(
+    link: httpLink,
+    cache: GraphQLCache(
+      store: InMemoryStore(),
     ),
   );
 
@@ -31,13 +29,13 @@ void main() async {
       providers: [
         Provider.value(
           value: MoviesRepository(
-            graphQLClient: client.value,
+            graphQLClient: client,
           ),
         ),
         BlocProvider.value(
           value: UsersCubit(
             usersRepository: UsersRepository(
-              graphQLClient: client.value,
+              graphQLClient: client,
             ),
           ),
         )
